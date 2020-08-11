@@ -13,7 +13,7 @@ git clone https://github.com/PeijunCN/DSD-ASPP-Net_pancreas_segmentation.git
 
 ### 2. **Download the NIH pancreas segmentation dataset and pretrained model:**<br/>
 1. visit [websit], download NIH pancreas segmentation datset
-2. download pretrained DenseASPP model from [here](https://drive.google.com/drive/folders/10fxALtmJ5IaUmhRuMsJbef40JGoWQz7n?usp=sharing), and put it under ./PyTorch_Pretrained/DenseASPP/
+2. download pretrained DenseASPP model from [here](https://drive.google.com/file/d/1TmGJXB73Ep1YE8u227g8zLqZf6lEvmXS/view?usp=sharing), and put it under ./PyTorch_Pretrained/DenseASPP/
 ### 3. Data Preparation
 1. convert images and labels from .nii.gz to .npy format
 2. set the data path as *data_path*, put images and labels to '*data_path*/images' and '*data_path*/labels', respectively. 
