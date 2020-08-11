@@ -1,0 +1,2 @@
+{'epoch_num': 30, 'lr': 3.0000000000000004e-05, 'weight_decay': 1e-05, 'momentum': 0.95, 'lr_patience': 100, 'snapshot': '', 'print_freq': 20, 'val_save_to_img_file': False, 'val_img_sample_rate': 0.1, 'batchsize': 1, 'slice_thickness': 3}
+
