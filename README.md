@@ -1,5 +1,5 @@
 # DSD-ASPP-Net_pancreas_segmentation
-This repository contains the DSD-ASPP-Net model (Distance-based Saliency-aware DenseASPP Network) for semantic segmentation implemented in PyTorch.
+This repository contains the DSD-ASPP-Net model (Distance-based Saliency-aware DenseASPP Network) for pancreas segmentation implemented in PyTorch.
 
 
 ## Usage
@@ -12,7 +12,7 @@ git clone https://github.com/PeijunCN/DSD-ASPP-Net_pancreas_segmentation.git
 
 
 ### 2. **Download the NIH pancreas segmentation dataset and pretrained model:**<br/>
-1. visit [Here](http://academictorrents.com/details/80ecfefcabede760cdbdf63e38986501f7becd49), download NIH pancreas segmentation datset
+1. visit [here](http://academictorrents.com/details/80ecfefcabede760cdbdf63e38986501f7becd49), download NIH pancreas segmentation datset
 2. download pretrained DenseASPP model from [here](https://drive.google.com/file/d/1TmGJXB73Ep1YE8u227g8zLqZf6lEvmXS/view?usp=sharing), and put it under ./PyTorch_Pretrained/DenseASPP/
 ### 3. Data Preparation
 1. convert images and labels from .nii.gz to .npy format
@@ -23,7 +23,7 @@ git clone https://github.com/PeijunCN/DSD-ASPP-Net_pancreas_segmentation.git
 1. PyTorch 1.4.0
 2. TensorBoard for PyTorch. [Here](https://github.com/lanpa/tensorboard-pytorch)  to install
 3. Some other libraries (find what you miss when running the code :-P)
-4. install the GeodistTK [Here](https://github.com/taigw/GeodisTK), run
+4. install the GeodistTK [here](https://github.com/taigw/GeodisTK), run
 ```
     python setup.py build
     python setup.py install 
