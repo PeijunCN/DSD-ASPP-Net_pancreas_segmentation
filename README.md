@@ -22,7 +22,7 @@ git clone https://github.com/PeijunCN/DSD-ASPP-Net_pancreas_segmentation.git
 ### 4. Requirement
 1. PyTorch 1.4.0
 2. TensorBoard for PyTorch. [Here](https://github.com/lanpa/tensorboard-pytorch)  to install
-3. Some other libraries (find what you miss when running the code :-P)
+3. Some other libraries (find what you miss when running the code)
 4. install the GeodistTK [here](https://github.com/taigw/GeodisTK), run
 ```
     python setup.py build
@@ -37,7 +37,7 @@ python train_pancreas_c2f200_coarse.py
 ```
 python train_pancreas_c2f200_saliency.py
 ```
-#### 6. testing
+### 6. testing
 1. coarse-scaled model testing:
 ```
 python test_organ_coarse_batch.py
