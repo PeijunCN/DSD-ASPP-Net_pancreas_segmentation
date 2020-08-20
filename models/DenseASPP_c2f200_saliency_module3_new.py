@@ -258,7 +258,6 @@ class SADDenseNet(nn.Module):
                 g = self.geodist(cropped_score.cpu(), cropped_image.cpu())
                 # print('  computing geodesic distance time: ' + \
                 #       str(time.time() - start_time) + ' second(s) elapsed.')
-            #saliency = g[:, 1, :].reshape(cropped_image.shape[0], 1, cropped_image.shape[2], cropped_image.shape[3])
             h = self.model(cropped_image.cuda(), g)
 
             h = F.sigmoid(h)
@@ -285,6 +284,27 @@ class SADDenseNet(nn.Module):
                 else:
                     D1 = np.zeros((W, H))
                 h[i, j] = torch.from_numpy(D1)
+        return h
+    
+    def eudist(self, prob, image):
+        (N, C, W, H) = prob.shape
+        h = torch.zeros([N, C, W, H])
+        for i in range(N):
+            for j in range(C):
+                prob_ = prob[i, j].reshape([W, H]).cpu().numpy()
+                img_ = image[i, j].reshape([W, H]).cpu().numpy()
+                S = (prob_>= 0.5).astype(np.uint8)
+
+                if S.sum().item() > 0:
+                    D1 = ndi.distance_transform_edt(1 - S)
+                    D1 = D1 / D1.max()
+                    D1 = 1 - D1
+                    D1 = D1 * D1  # ADD ON 4.1
+                else:
+                    D1 = np.zeros((W, H))
+
+                h[i, j] = torch.from_numpy(D1)
+
         return h
 
 
@@ -362,7 +382,6 @@ class SADDenseNet(nn.Module):
 
         crop_info = np.zeros((1, 4), dtype=np.int16)
         crop_info[0] = bbox
-        #crop_info = torch.from_numpy(crop_info).cuda()
         crop_info = torch.from_numpy(crop_info)
 
         del binary_mask, cropped_image_rs, cropped_label_rs, prob_map, score
@@ -378,6 +397,15 @@ class SADDenseNet(nn.Module):
 
         bbox = [int(self.left), int(W-self.right), \
                 int(self.top), int(H-self.bottom)]
+
+        if (bbox[1] - bbox[0]) % 8:
+            a, b = divmod(bbox[1] - bbox[0], 8)
+            bbox[0] = bbox[0] + b
+
+        if (bbox[3] - bbox[2]) % 8:
+            a, b = divmod(bbox[3] - bbox[2], 8)
+            bbox[2] = bbox[2] + b
+
         cropped_image = image[:, :, bbox[0]: bbox[1], bbox[2]: bbox[3]]
 
         crop_info = np.zeros((1, 4), dtype=np.int16)
@@ -404,14 +432,14 @@ class SADDenseNet(nn.Module):
             self.bottom = int(a[self.batch * 3: self.batch * 4].sum() / self.batch)
 
     def uncrop(self, crop_info, cropped_image, image):
-        uncropped_image = torch.ones_like(image)
+        uncropped_image = torch.ones([cropped_image.shape[0], cropped_image.shape[1], image.shape[2], image.shape[3]])
         uncropped_image *= (-9999999)
         bbox = crop_info[0]
         uncropped_image[:, :, bbox[0].item(): bbox[1].item(), bbox[2].item(): bbox[3].item()] = cropped_image
         return uncropped_image
 
     def uncropfine(self, crop_info, cropped_image, image):
-        uncropped_image = torch.ones_like(image)
+        uncropped_image = torch.ones([cropped_image.shape[0], cropped_image.shape[1], image.shape[2], image.shape[3]])
         uncropped_image *= (0)
         bbox = crop_info[0]
         (N, C, W, H) = cropped_image.shape

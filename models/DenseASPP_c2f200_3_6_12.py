@@ -186,18 +186,6 @@ class SADDenseNet(nn.Module):
         elif self.TEST == 'F': # Fine testing
             cropped_image, crop_info, cropped_label = self.croptrainfine(score, image)
 
-            if score.sum().item() < 0:
-                crop_image1 = image[0].detach().cpu().numpy().transpose(1, 2, 0)
-                crop_image2 = score[0].detach().cpu().numpy().transpose(1, 2, 0)
-                crop_image3 = cropped_image[0].detach().cpu().numpy().transpose(1, 2, 0)
-                plt.figure(figsize=(15, 5))
-                plt.subplot(1, 3, 1)
-                plt.imshow(crop_image1, cmap='gray')
-                plt.subplot(1, 3, 2)
-                plt.imshow(crop_image2, cmap='gray')
-                plt.subplot(1, 3, 3)
-                plt.imshow(crop_image3, cmap='gray')
-                plt.show()
 
             h = cropped_image.cuda()
             h = self.model(h)
@@ -245,8 +233,6 @@ class SADDenseNet(nn.Module):
                             int(max(minB - self.top, 0)), int(min(maxB + self.bottom + 1, H))]
                     mask[n, :, bbox[0]: bbox[1], bbox[2]: bbox[3]] = 1
                     del arr, cur_mask
-                #saliency_data = saliency_data * mask.cuda()
-                #saliency_data = saliency_data * mask
 
                 del mask
 
@@ -278,19 +264,10 @@ class SADDenseNet(nn.Module):
         cropped_image_rs = transform.resize(cropped_image.numpy(), (N, C, 224, 224))
         cropped_image = torch.from_numpy(cropped_image_rs)
 
-        #crop_image1=cropped_image[0].numpy().transpose(1, 2, 0)
-        #crop_image2 = cropped_image[1].numpy().transpose(1, 2, 0)
-        #plt.figure(figsize=(15, 5))
-        #plt.subplot(1, 2, 1)
-        #plt.imshow(crop_image1, cmap='gray')
-        #plt.subplot(1, 2, 2)
-        #plt.imshow(crop_image2, cmap='gray')
-        #plt.show()
 
 
         crop_info = np.zeros((1, 4), dtype=np.int16)
         crop_info[0] = bbox
-        #crop_info = torch.from_numpy(crop_info).cuda()
         crop_info = torch.from_numpy(crop_info)
 
         del binary_mask
@@ -331,12 +308,8 @@ class SADDenseNet(nn.Module):
                         maxB = arr[:, 2].max().item()
                         bbox = [int(max(minA - self.left, 0)), int(min(maxA + self.right + 1, W)), \
                                 int(max(minB - self.top, 0)), int(min(maxB + self.bottom + 1, H))]
-                        #mask[n, :, bbox[0]: bbox[1], bbox[2]: bbox[3]] = 1
                         del arr, cur_mask
-                #saliency_data = saliency_data * mask.cuda()
-                #saliency_data = saliency_data * mask
 
-                #del mask
 
             arr = torch.nonzero(binary_mask)
             minA = arr[:, 2].min().item()
@@ -382,7 +355,6 @@ class SADDenseNet(nn.Module):
 
         crop_info = np.zeros((1, 4), dtype=np.int16)
         crop_info[0] = bbox
-        #crop_info = torch.from_numpy(crop_info).cuda()
         crop_info = torch.from_numpy(crop_info)
 
         del binary_mask, cropped_image_rs, cropped_label_rs, prob_map
@@ -433,14 +405,14 @@ class SADDenseNet(nn.Module):
             self.bottom = int(a[self.batch * 3: self.batch * 4].sum() / self.batch)
 
     def uncrop(self, crop_info, cropped_image, image):
-        uncropped_image = torch.ones_like(image)
+        uncropped_image = torch.ones([cropped_image.shape[0], cropped_image.shape[1], image.shape[2], image.shape[3]])
         uncropped_image *= (-9999999)
         bbox = crop_info[0]
         uncropped_image[:, :, bbox[0].item(): bbox[1].item(), bbox[2].item(): bbox[3].item()] = cropped_image
         return uncropped_image
 
     def uncropfine(self, crop_info, cropped_image, image):
-        uncropped_image = torch.ones_like(image)
+        uncropped_image = torch.ones([cropped_image.shape[0], cropped_image.shape[1], image.shape[2], image.shape[3]])
         uncropped_image *= (0)
         bbox = crop_info[0]
         (N, C, W, H) = cropped_image.shape
